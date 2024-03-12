@@ -308,25 +308,28 @@ from IPython import get_ipython
 get_ipython().run_line_magic("matplotlib", "widget")
 from pylab import cm
 
+
+# Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
 def fr(x, y):
     return (1-x)**2 + 100*(y-x)**2
 
-x = np.arange(-5, 5, 0.05)
-y = np.arange(-5, 5, 0.05)
-X, Y = np.meshgrid(x, y)
+x1 = np.arange(-5, 5, 0.05)
+y1 = np.arange(-5, 5, 0.05)
+X, Y = np.meshgrid(x1, y1)
 Z = fr(X, Y)
+
 
 # Figure : lignes de niveau.
 fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
-ax_level_sets.set_title(r"$Fonction de Rosenbrock$: lignes de niveau")
-level_sets = ax_level_sets.contourf(X, Y, Z, levels=30, cmap="RdBu_r")
+ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [-5,5]²")
+level_sets = ax_level_sets.contourf(X, Y, Z, levels=20, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
 
 # Figure : surface
 fig_surface, ax_surface = plt.subplots(
     1, 1, figsize=(3, 3), subplot_kw={"projection": "3d"}
 )
-ax_surface.set_title(r"$x^2 - y^4$: surface")
+ax_surface.set_title(r"Rosenbrock surface sur [-5,5]²")
 surf = ax_surface.plot_surface(
     X,
     Y,
@@ -339,4 +342,16 @@ surf = ax_surface.plot_surface(
     alpha=0.8,
 )
 
+# %%
+# Représentation des lignes de niveau de f_r sur [0,1.5]
+x2 = np.arange(0, 1.5, 0.05)
+y2 = np.arange(0, 1.5, 0.05)
+X2, Y2 = np.meshgrid(x2, y2)
+Z2 = fr(X2,Y2)
+fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
+ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [0,1.5]²")
+level_sets = ax_level_sets.contourf(X2, Y2, Z2, levels=40, cmap="RdBu_r")
+fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
+
+#On remarque la fonction admet beaucoup de
 # %%
