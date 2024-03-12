@@ -190,14 +190,153 @@ plt.legend()
 # QUESTION 3 Descente de gradient par coordonnée
 
 #Methode de la descente de gradient par coordonées avec condition d'arret
-def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon):
+def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
     x = x_init
     for i in range(1,n_iter+1):
-        g = grad(x)
+        g = grad(x,a,b)
         if np.linalg.norm(g,ord=2)**2<=epsilon**2:
             break
         else:
-            for j in range(1,len(grad)+1):
+            for j in range(0,len(g)):
                 x[j] = x[j]-gamma*g[j]
     return x
 
+# %%
+import time
+
+# Comparaison en temps des deux méthodes pour a=1=b
+print("Comparaison des deux méthodes pour a=1=b")
+
+t0 = time.perf_counter()
+res1 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,1,1)[-1]
+temps1 = time.perf_counter()-t0
+print(f"Temps d'exécution de la méthode classque: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
+
+t1 = time.perf_counter()
+res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)
+temps2 = time.perf_counter()-t1
+print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément est: {res2}.")
+
+tmp = round(temps1/temps2, 3)
+print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
+
+
+print()
+print("=====================================")
+print()
+
+# Comparaison en temps des deux méthodes pour a=50=b
+print("Comparaison des deux méthodes pour a=50=b")
+
+t2 = time.perf_counter()
+res3 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,50,50)[-1]
+temps3 = time.perf_counter()-t2
+print(f"Temps d'exécution de la méthode classque: {temps3:.4f}, le dernier élément rajouté est: {res3}.")
+
+
+t3 = time.perf_counter()
+res4 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,50,50)
+temps4 = time.perf_counter()-t3
+print(f"Temps d'exécution de la méthode par coordonnée: {temps4:.4f}, le dernier élément est: {res3}.")
+
+tmp = round(temps3/temps4, 3)
+print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
+
+
+
+
+# %%
+# QUESTION 4 Avec scipy
+# Partie a) Problème convexe
+
+from scipy.optimize import minimize
+
+#Minimisation de la fonction f_20_20 avec la méthode Nelder-Mead
+def fab_20_20(v):
+    x, y = v
+    return y**2/20 + x**2/20
+
+# define range for input
+r_min, r_max = -5.0, 5.0
+# define the starting point as a random sample from the domain
+pt = (1,1)
+# perform the search
+result1 = minimize(fab_20_20, pt, method='nelder-mead',tol=10e-10)
+# summarize the result
+print("Resultat de la minimisation pour Nelder:")
+print('Success : %s' % result1.success)  #Determine si la fonction a fini de converger
+print('Status : %s' % result1.message)
+print('Total Evaluations: %d' % result1.nfev)
+# evaluate solution
+solution1 = result1.x
+evaluation1 = fab_20_20(solution1)
+print('Solution: f(%s) = %.5f' % (solution1, evaluation1),"\n")
+
+print("=====================================\n")
+
+result2 = minimize(fab_20_20, pt, method='CG',tol=10e-10)
+# summarize the result
+print("Resultat de la minimisation pour CG:")
+print('Success : %s' % result2.success)
+print('Status : %s' % result2.message)
+print('Total Evaluations: %d' % result2.nfev) #Donne le nombre total d'évaluation
+# evaluate solution
+solution2 = result2.x
+evaluation2 = fab_20_20(solution2)
+print('Solution: f_20_20(%s) = %.5f' % (solution2, evaluation2),"\n")
+print("Est ce que les deux solutions sont les même à 10e-9 près:",np.isclose(solution1,solution2, atol=10e-9, rtol=10e-9))
+
+'''On remarque dans un premier temps que les deux méthodes n'effectuent pas le même 
+nombre d'évaluation. En effet, avec la méthode Nelder-Mead minimize() 
+effectue 139 itérations, tandis que pour la méthode CG (conjugate gradient)en effectue 204.
+
+Dans un second temps on remarque que la valeur du minimum renvoyé est le même: 0. 
+Cependant la  valeur affichée pour le x auquel la fonction prend cette valeur n'est pas 
+exactement la même. Mais l'affichage avec l'appel à np.isclose() permet de s'assurer 
+que les deux algorithmes convergent vers "la même solution"
+
+result.success nous donne si la fonction renvoie bien un résultat
+result.message explique la cause de terminaison de l'algorithme
+result.nfev nous donne le nombre d'evaluation effectuées par minimize()
+'''
+
+
+# %%
+# QUESTION 4   
+# Partie b) Problème non convexe
+from IPython import get_ipython
+get_ipython().run_line_magic("matplotlib", "widget")
+from pylab import cm
+
+def fr(x, y):
+    return (1-x)**2 + 100*(y-x)**2
+
+x = np.arange(-5, 5, 0.05)
+y = np.arange(-5, 5, 0.05)
+X, Y = np.meshgrid(x, y)
+Z = fr(X, Y)
+
+# Figure : lignes de niveau.
+fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
+ax_level_sets.set_title(r"$Fonction de Rosenbrock$: lignes de niveau")
+level_sets = ax_level_sets.contourf(X, Y, Z, levels=30, cmap="RdBu_r")
+fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
+
+# Figure : surface
+fig_surface, ax_surface = plt.subplots(
+    1, 1, figsize=(3, 3), subplot_kw={"projection": "3d"}
+)
+ax_surface.set_title(r"$x^2 - y^4$: surface")
+surf = ax_surface.plot_surface(
+    X,
+    Y,
+    Z,
+    rstride=1,
+    cstride=1,
+    cmap=cm.RdBu_r,
+    linewidth=0,
+    antialiased=True,
+    alpha=0.8,
+)
+
+# %%
