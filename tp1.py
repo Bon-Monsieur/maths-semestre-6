@@ -184,7 +184,7 @@ fig, axs = plt.subplots(2, 1, sharex=True, figsize=(6, 8))
 
 for i in range(len(lambdas)):
     y = np.exp(-x * i)
-    axs[0].plot(x, y, color=colors[i])  # XXX TODO
+    axs[0].plot(x, y, color=colors[i])
     axs[1].semilogy(x, y, color=colors[i], label=f'$\lambda_{{{i}}}$')
 
 # Titres / sous-titres
