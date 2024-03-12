@@ -163,7 +163,6 @@ plt.show()
 
 # %%
 # Affichage de la distance à l’optimum en norme à échelle logarithmique
-
 li1_norm = [np.linalg.norm(v,ord=2) for v in li1]
 li2_norm = [np.linalg.norm(v,ord=2) for v in li2]
 li3_norm = [np.linalg.norm(v,ord=2) for v in li3]
@@ -183,3 +182,22 @@ plt.legend()
 # %%
 # a = ? ; b = ?
 #   
+# a = ? ; b = ?
+
+
+
+# %%
+# QUESTION 3 Descente de gradient par coordonnée
+
+#Methode de la descente de gradient par coordonées avec condition d'arret
+def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon):
+    x = x_init
+    for i in range(1,n_iter+1):
+        g = grad(x)
+        if np.linalg.norm(g,ord=2)**2<=epsilon**2:
+            break
+        else:
+            for j in range(1,len(grad)+1):
+                x[j] = x[j]-gamma*g[j]
+    return x
+
