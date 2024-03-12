@@ -190,14 +190,65 @@ plt.legend()
 # QUESTION 3 Descente de gradient par coordonnée
 
 #Methode de la descente de gradient par coordonées avec condition d'arret
-def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon):
+def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
     x = x_init
     for i in range(1,n_iter+1):
-        g = grad(x)
+        g = grad(x,a,b)
         if np.linalg.norm(g,ord=2)**2<=epsilon**2:
             break
         else:
-            for j in range(1,len(grad)+1):
+            for j in range(0,len(g)):
                 x[j] = x[j]-gamma*g[j]
     return x
 
+# %%
+import time
+
+# Comparaison en temps des deux méthodes pour a=1=b
+print("Comparaison des deux méthodes pour a=1=b")
+
+t0 = time.perf_counter()
+res1 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,1,1)[-1]
+temps1 = time.perf_counter()-t0
+print(f"Temps d'exécution de la méthode classque: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
+
+t1 = time.perf_counter()
+res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)
+temps2 = time.perf_counter()-t1
+print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément est: {res2}.")
+tmp = round(temps1/temps2, 3)
+print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
+print()
+print("=====================================")
+print()
+
+# Comparaison en temps des deux méthodes pour a=50=b
+print("Comparaison des deux méthodes pour a=50=b")
+
+t2 = time.perf_counter()
+res3 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,50,50)[-1]
+temps3 = time.perf_counter()-t2
+print(f"Temps d'exécution de la méthode classque: {temps3:.4f}, le dernier élément rajouté est: {res3}.")
+
+t3 = time.perf_counter()
+res4 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,50,50)
+temps4 = time.perf_counter()-t3
+print(f"Temps d'exécution de la méthode par coordonnée: {temps4:.4f}, le dernier élément est: {res3}.")
+tmp = round(temps3/temps4, 3)
+print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
+
+
+
+
+# %%
+# QUESTION 4 Avec scipy
+from scipy.optimize import minimize
+
+# Partie a) Problème convexe
+
+
+
+
+
+
+# %%
