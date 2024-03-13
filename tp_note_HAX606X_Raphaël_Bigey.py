@@ -9,17 +9,17 @@ from matplotlib import cm
 # QUESTION 1 Coder la descente de gradient
 
 # Implémentation fonction de descente de gradient
-def descente(grad,x_init,gamma,maxiter,epsilon):
+def descente(grad, x_init, gamma, maxiter, epsilon):
     x = x_init
-    res = [x]
-    for i in range(1,maxiter+1):
+    results = [x]
+    for i in range(1, maxiter + 1):
         g = grad(x)
-        if np.linalg.norm(g,ord=2)**2<=epsilon**2:
+        if np.square(np.linalg.norm(g)) <= np.square(epsilon):  # Norme 2 (voir doc numpy)
             break
         else:
-            x = (x[0] - gamma*g[0],x[1]-gamma*g[1])
-        res.append(x)
-    return res
+            x = [x[0] - gamma * g[0], x[1] - gamma * g[1]]
+            results.append(x)
+    return results
 
 #Verification avec la fonction f_test
 def ftest(x, y):
@@ -251,11 +251,12 @@ def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon):
     x = x_init
     res=[x]
     for i in range(1,n_iter+1):
+        
         g = grad(x)
         if np.linalg.norm(g,ord=2)**2<=epsilon**2:
             break
         else:
-
+            
             temp = x.copy()
             for j in range(0,len(g)):
                 temp[j] = x[j]-gamma*g[j]
@@ -269,7 +270,7 @@ def descenteCoordFixeFab(grad,x_init,gamma,n_iter,epsilon,a,b):
     res=[x]
     for i in range(1,n_iter+1):
         g = grad(x,a,b)
-        if np.linalg.norm(g,ord=2)**2<=epsilon**2:
+        if np.linalg.norm(g,ord=2)**2 <= epsilon**2:
             break
         else:
 
@@ -429,16 +430,15 @@ from IPython import get_ipython
 get_ipython().run_line_magic("matplotlib", "widget")
 from pylab import cm
 
-
 # Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
-def fr(x,y):
-    
-    return (1-x)**2 + 100*(y-x)**2
+def fr(v):
+    x,y = v
+    return (1-x)**2 + 100*(y-x**2)**2
 
-
-def GradFr(v):
-    x, y = v
-    return (-2*(1-x)-200*(y-x) ,200*(y-x))
+def grad_f(x):
+    dx = -2*(1 - x[0]) - 400*x[0]*(x[1] - x[0]**2)
+    dy = 200*(x[1] - x[0]**2)
+    return np.array([dx, dy])
 
 
 
@@ -446,9 +446,10 @@ fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 X = np.arange(-5, 5, 0.25)
 Y = np.arange(-5, 5, 0.25)
 X, Y = np.meshgrid(X, Y)
-Z = fr(X, Y)
+Z = fr([X, Y])
 
 # Plot the surface
+ax.set_title(r"Surface de la fonction de Rosenbrock")
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 # Add a color bar which maps values to colors.
@@ -456,15 +457,14 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 
 
-# Figure : lignes de niveau.
+# Figure : lignes de niveau de f_r sur [-5,5]
 plt.figure()
-plt.contour(X, Y, Z,15)
+plt.contour(X, Y, Z,20)
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title(r'Lignes de niveau $f_r$')
-plt.colorbar(label=r'Valeurs de $f_r(x, y)$',color='Rblue')
+plt.title(r'Lignes de niveau $f_r$ sur [-5,5]')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
 plt.grid(True)
-plt.legend()
 plt.show()
 
 # %%
@@ -472,36 +472,92 @@ plt.show()
 x2 = np.arange(0, 1.5, 0.05)
 y2 = np.arange(0, 1.5, 0.05)
 X2, Y2 = np.meshgrid(x2, y2)
-Z2 = fr(X2,Y2)
+Z2 = fr([X2,Y2])
 
-
+plt.figure()
+plt.contour(X2, Y2, Z2,20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Lignes de niveau $f_r$ sur [0,1.5]')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
+plt.grid(True)
 plt.show()
 
-#La difficulté d'optimiser la fonction vient de 
-
-
-
+#Les lignes de niveau nous intdique que la fonction de Rosenbrock est 
+#plate aux alentours de (1,1) notamment sur l'axe x=y. La difficulté
+#de minimisation vient de là. En effet, à chaque itérations, l'algorithme
+#se rapproche peu du minimum global
 
 
 
 # %%
 # Minimisation avec la descente de gradient classique
 
-test1 = descente(GradFr,(-3,3),0.01,2000,10e-8)[-1]
-test2 = descente(GradFr,(0,2),0.01,2000,10e-8)[-1]
-test3 = descente(GradFr,(-0.5,0.5),0.01,2000,10e-8)[-1]
+test1 = descente(grad_f, (2,2), 0.001, 500000, 0.01)
+test2 = descente(grad_f, (-1,-1), 0.001, 500000, 0.01)
+test3 = descente(grad_f, (0.5,1.5), 0.001, 500000, 0.01)
 
-test4 = descenteCoordFixe(GradFr,[-3,3],0.01,2000,10e-8)[-1]
-test5 = descenteCoordFixe(GradFr,[0,2],0.01,2000,10e-8)[-1]
-test6 = descenteCoordFixe(GradFr,[-0.5,0.5],0.01,2000,10e-8)[-1]
+# Minimisation avec la descente de gradient à coordonées
+test1_coord = descenteCoordFixe(grad_f, [2,2], 0.001, 500000, 0.01)
+test2_coord = descenteCoordFixe(grad_f, [-1,-1], 0.001, 500000, 0.01)
+test3_coord = descenteCoordFixe(grad_f, [0.5,1.5], 0.001, 500000, 0.01)
+
+# Affichage de la distance à l’optimum en norme 2 à échelle logarithmique
+test1_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test1]
+test2_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test2]
+test3_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test3]
+
+plt.figure()
+plt.yscale("log")
+
+plt.ylabel("Distance à l'optimum en norme 2")
+plt.xlabel("Itérations")
+
+plt.title('Distance à l\'optimum en norme l2')
+plt.plot(test1_norm,label=r'$x_0=(2,2)$')
+plt.plot(test2_norm,label=r'$x_0=(-1,-1)$')
+plt.plot(test3_norm,label=r'$x_0=(0.5,1.5)$')
+plt.legend()
+plt.show()
+
+# On voit bien sur ce graphique que la distance au point (1,1) devient de 
+# plus en plus petite. Cela nous permet donc d'observer correctement la convergence
+
+# Affichage des lignes de niveau de la fonction de Rosenbrock
+x = np.linspace(-3,3,2000)
+y = np.linspace(-3,3,2000)
+X, Y = np.meshgrid(x, y)
+Z = fr([X,Y])
+
+# Affichage de la descente de gradient sur les lignes de niveau de la fonction de Rosenbrock
+x_test1, y_test1 = zip(*test1)
+x_test2, y_test2 = zip(*test2)
+x_test3, y_test3 = zip(*test3)
+
+plt.figure()
+plt.contour(X, Y, Z,20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Trajectoires de convergence sur les lignes de niveau')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
+plt.grid(True)
+plt.scatter(x_test1,y_test1,color='red',label=r'$x_k test1$',marker='.')
+plt.scatter(x_test2,y_test2,color='blue',label=r'$x_k2 test2$',marker='.')
+plt.scatter(x_test3,y_test3,color='green',label=r'$x_k test3$',marker='.')
+plt.legend()
+plt.show()
+
+#
 
 
 
 # %%
 # Utilisation de la méthode de Nelder-Mead 
 # pour minimiser la fonction de Rosenborck
-pt=(1,1)
+pt=(2,2)
 resu = minimize(fr, pt, method='nelder-mead',tol=10e-10)
+print(resu)
 
 
 
+# %%

@@ -1,0 +1,164 @@
+# %%
+# QUESTION 4   
+# Partie b) Problème non convexe
+from IPython import get_ipython
+get_ipython().run_line_magic("matplotlib", "widget")
+from pylab import cm
+
+# Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
+def fr(v):
+    x,y = v
+    return (1-x)**2 + 100*(y-x**2)**2
+
+def grad_f(x):
+    dx = -2*(1 - x[0]) - 400*x[0]*(x[1] - x[0]**2)
+    dy = 200*(x[1] - x[0]**2)
+    return np.array([dx, dy])
+
+
+
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
+Z = fr([X, Y])
+
+# Plot the surface
+ax.set_title(r"Surface de la fonction de Rosenbrock")
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+# Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+
+
+# Figure : lignes de niveau de f_r sur [-5,5]
+plt.figure()
+plt.contour(X, Y, Z,20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Lignes de niveau $f_r$ sur [-5,5]')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
+plt.grid(True)
+plt.show()
+
+# %%
+# Représentation des lignes de niveau de f_r sur [0,1.5]
+x2 = np.arange(0, 1.5, 0.05)
+y2 = np.arange(0, 1.5, 0.05)
+X2, Y2 = np.meshgrid(x2, y2)
+Z2 = fr([X2,Y2])
+
+plt.figure()
+plt.contour(X2, Y2, Z2,20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Lignes de niveau $f_r$ sur [0,1.5]')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
+plt.grid(True)
+plt.show()
+
+#Les lignes de niveau nous intdique que la fonction de Rosenbrock est 
+#plate aux alentours de (1,1) notamment sur l'axe x=y. La difficulté
+#de minimisation vient de là. En effet, à chaque itérations, l'algorithme
+#se rapproche peu du minimum global
+
+
+
+# %%
+# Minimisation avec la descente de gradient classique
+
+# classique
+test1 = descente(grad_f, (2,2), 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient classique")
+print(test1)
+print(test1[-1])
+
+# coordonnées
+test1_coord = descenteCoordFixe(grad_f, [2,2], 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient par coordonnées")
+print(test1_coord)
+print(test1_coord[-1])
+
+# classique
+test2 = descente(grad_f, (-1,-1), 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient classique")
+print(test2)
+print(test2[-1])
+
+# coordonnées
+test2_coord = descenteCoordFixe(grad_f, [-1,-1], 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient par coordonnées")
+print(test2_coord)
+print(test2_coord[-1])
+
+# classique
+test3 = descente(grad_f, (0.5,1.5), 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient classique")
+print(test3)
+print(test3[-1])
+
+# coordonnées
+test3_coord = descenteCoordFixe(grad_f, [0.5,1.5], 0.001, 500000, 0.01)
+print("Minimisation avec la descente de gradient par coordonnées")
+print(test3_coord)
+print(test3_coord[-1])
+
+"""
+# Utilisation de la méthode de Nelder-Mead 
+# pour minimiser la fonction de Rosenborck
+pt=(2,2)
+resu = minimize(fr, pt, method='nelder-mead',tol=10e-10)
+print(resu)
+"""
+
+# %%
+# QUESTION 5 - visualisation de la descente de gradient sur les lignes de niveau de f_r
+# avec la méthode de descente de gradient classique
+
+# Affichage des lignes de niveau de la fonction de Rosenbrock
+x = np.linspace(-2,2,1000)
+y = np.linspace(-2,2,1000)
+X, Y = np.meshgrid(x, y)
+Z = fr([X,Y])
+
+# Affichage de la descente de gradient sur les lignes de niveau de la fonction de Rosenbrock
+x_test1, y_test1 = zip(*test1)
+x_test2, y_test2 = zip(*test2)
+x_test3, y_test3 = zip(*test3)
+
+plt.figure()
+plt.contour(X, Y, Z,20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Lignes de niveau de la fonction de Rosenbrock')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$')
+plt.grid(True)
+plt.scatter(x_test1,y_test1,color='red',label=r'$x_k1$',marker='.')
+plt.scatter(x_test2,y_test2,color='blue',label=r'$x_k2$',marker='.')
+plt.scatter(x_test3,y_test3,color='green',label=r'$x_k3$',marker='.')
+plt.legend()
+plt.show()
+
+# %%
+# QUESTION 5 - visualisation de la descente de gradient par rapport à la distance à l'optimum
+
+# Affichage de la distance à l’optimum en norme à échelle logarithmique
+test1_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test1]
+test2_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test2]
+test3_norm = [np.linalg.norm((v[0] - 1, v[1]-1),ord=2) for v in test3]
+
+plt.figure()
+plt.yscale("log")
+
+plt.ylabel("Distance à l'optimum")
+plt.xlabel("Itérations")
+
+plt.title('Distance à l\'optimum en norme l2')
+plt.plot(test1_norm,label=r'$x_0=(2,2)$')
+plt.plot(test2_norm,label=r'$x_0=(-1,-1)$')
+plt.plot(test3_norm,label=r'$x_0=(0.5,1.5)$')
+plt.legend()
+plt.show()
+
+# %%
