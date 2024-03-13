@@ -257,8 +257,8 @@ def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
             temp = x.copy()
             for j in range(0,len(g)):
                 temp[j] = x[j]-gamma*g[j]
-            x=temp.copy()
-            res.append(x)
+                x=temp.copy()
+                res.append(x)
     return res
 
 
@@ -304,11 +304,12 @@ tmp = round(temps3/temps4, 3)
 print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=100=b")
 
 #%% 
+#Affichage pour l'algo de descente classique
 x = np.linspace(-2,2,1000)
 y = np.linspace(-2,2,1000)
 X, Y = np.meshgrid(x, y)
 
-li1 = descenteFab(fabGrad, (1, 1), 0.1, 500, 0.0001,1,1)
+li1 = descenteFab(fabGrad, (1, 1), 0.1, 1000, 0.0001,1,1)
 x_li1, y_li1 = zip(*li1)
 
 
@@ -319,14 +320,13 @@ plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Descente gradient classique')
 plt.colorbar(label='Valeurs de f(x, y)')
-
 plt.grid(True)
 plt.scatter(x_li1,y_li1,color='red',label='Les points itérés',marker='.')
 plt.legend()
 plt.show()
 #%%
-
-li2 = descenteCoordFixe(fabGrad, [1, 1], 0.1, 500, 0.0001,1,1)
+#Affichage pour l'algo de descente par coordonnées
+li2 = descenteCoordFixe(fabGrad, [1, 1], 0.1, 1000, 0.0001,1,1)
 x_li2, y_li2 = zip(*li2)
 
 Z2 = fab(1,1,X,Y)
@@ -343,30 +343,24 @@ plt.show()
 
 
 
-
-
-
-
 # %%
 # QUESTION 4 Avec scipy
 # Partie a) Problème convexe
 
 from scipy.optimize import minimize
 
+
 #Minimisation de la fonction f_20_20 avec la méthode Nelder-Mead
 def fab_20_20(v):
     x, y = v
     return y**2/20 + x**2/20
 
-# define range for input
-r_min, r_max = -5.0, 5.0
-# define the starting point as a random sample from the domain
+
 pt = (1,1)
-# perform the search
 result1 = minimize(fab_20_20, pt, method='nelder-mead',tol=10e-10)
-# summarize the result
+
 print("Resultat de la minimisation pour Nelder:")
-print('Success : %s' % result1.success)  #Determine si la fonction a fini de converger
+print('Success : %s' % result1.success)
 print('Status : %s' % result1.message)
 print('Total Evaluations: %d' % result1.nfev)
 # evaluate solution
@@ -412,21 +406,24 @@ from pylab import cm
 
 
 # Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
-'''def fr(x, y):
+def fr(x, y):
     return (1-x)**2 + 100*(y-x)**2
+
+def GradFr(x,y):
+    return (-2*(1-x)-200*(y-x) ,200*(y-x))
 
 x1 = np.arange(-5, 5, 0.05)
 y1 = np.arange(-5, 5, 0.05)
 X, Y = np.meshgrid(x1, y1)
-Z = fr(X, Y)'''
+Z = fr(X, Y)
 
 
 # Figure : lignes de niveau.
-'''fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
+fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
 ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [-5,5]²")
 level_sets = ax_level_sets.contourf(X, Y, Z, levels=20, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
-
+plt.show()
 # Figure : surface
 fig_surface, ax_surface = plt.subplots(
     1, 1, figsize=(3, 3), subplot_kw={"projection": "3d"}
@@ -442,19 +439,31 @@ surf = ax_surface.plot_surface(
     linewidth=0,
     antialiased=True,
     alpha=0.8,
-)'''
+)
 
 # %%
 # Représentation des lignes de niveau de f_r sur [0,1.5]
-'''x2 = np.arange(0, 1.5, 0.05)
+x2 = np.arange(0, 1.5, 0.05)
 y2 = np.arange(0, 1.5, 0.05)
 X2, Y2 = np.meshgrid(x2, y2)
 Z2 = fr(X2,Y2)
+
 fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
 ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [0,1.5]²")
 level_sets = ax_level_sets.contourf(X2, Y2, Z2, levels=40, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
-plt.show()'''
+plt.show()
 
-#On remarque la fonction admet beaucoup de
+#La difficulté d'optimiser la fonction vient de 
+
+
+
+
+
+
 # %%
+# Minimisation avec la descente de gradient classique
+# Premier point initial: (-3,3)
+test1 = descente(GradFr,(-3,3),0.01,2000,10e-8)[-1]
+
+
