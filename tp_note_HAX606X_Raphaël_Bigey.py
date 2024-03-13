@@ -344,7 +344,7 @@ plt.ylabel('y')
 plt.title(r'Descente gradient classique pour $f_{1,1}$')
 plt.colorbar(label=r'valeurs de $f_{1,1}(x, y)$')
 plt.grid(True)
-plt.scatter(x_li1,y_li1,color='red',label=r'x_k',marker='.')
+plt.scatter(x_li1,y_li1,color='red',label=r'$x_k$',marker='.')
 plt.legend()
 plt.show()
 #%%
@@ -440,35 +440,32 @@ def GradFr(v):
     x, y = v
     return (-2*(1-x)-200*(y-x) ,200*(y-x))
 
-x1 = np.arange(-5, 5, 0.05)
-y1 = np.arange(-5, 5, 0.05)
-X, Y = np.meshgrid(x1, y1)
+
+
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+X = np.arange(-5, 5, 0.25)
+Y = np.arange(-5, 5, 0.25)
+X, Y = np.meshgrid(X, Y)
 Z = fr(X, Y)
+
+# Plot the surface
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+# Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
 
 
 # Figure : lignes de niveau.
-fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
-ax_level_sets.set_title(r"Lignes de niveau de $ f_r $ sur [-5,5]²")
-level_sets = ax_level_sets.contourf(X, Y, Z, levels=20, cmap="RdBu_r")
-fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
+plt.figure()
+plt.contour(X, Y, Z,15)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(r'Lignes de niveau $f_r$')
+plt.colorbar(label=r'Valeurs de $f_r(x, y)$',color='Rblue')
+plt.grid(True)
+plt.legend()
 plt.show()
-
-# Figure : surface
-fig_surface, ax_surface = plt.subplots(
-    1, 1, figsize=(3, 3), subplot_kw={"projection": "3d"}
-)
-ax_surface.set_title(r"Surface de la fonction de Rosenbrock sur [-5,5]²")
-surf = ax_surface.plot_surface(
-    X,
-    Y,
-    Z,
-    rstride=1,
-    cstride=1,
-    cmap=cm.RdBu_r,
-    linewidth=0,
-    antialiased=True,
-    alpha=0.8,
-)
 
 # %%
 # Représentation des lignes de niveau de f_r sur [0,1.5]
@@ -477,10 +474,7 @@ y2 = np.arange(0, 1.5, 0.05)
 X2, Y2 = np.meshgrid(x2, y2)
 Z2 = fr(X2,Y2)
 
-fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
-ax_level_sets.set_title(r"Lignes de niveau de $ f_r $ sur [0,1.5]²")
-level_sets = ax_level_sets.contourf(X2, Y2, Z2, levels=40, cmap="RdBu_r")
-fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
+
 plt.show()
 
 #La difficulté d'optimiser la fonction vient de 
