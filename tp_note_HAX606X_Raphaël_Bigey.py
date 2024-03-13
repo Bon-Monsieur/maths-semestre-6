@@ -195,6 +195,7 @@ plt.show()
 
 
 # %%
+
 # a = 3 ; b = 20
 x = np.linspace(-2,2,1000)
 y = np.linspace(-2,2,1000)
@@ -241,6 +242,7 @@ plt.show()
 
 
 
+
 # %%
 # QUESTION 3 Descente de gradient par coordonnée
 
@@ -248,18 +250,19 @@ plt.show()
 def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
     x = x_init
     res=[x]
-    
     for i in range(1,n_iter+1):
         g = grad(x,a,b)
         if np.linalg.norm(g,ord=2)**2<=epsilon**2:
             break
         else:
+
             temp = x.copy()
             for j in range(0,len(g)):
                 temp[j] = x[j]-gamma*g[j]
                 x=temp.copy()
                 res.append(x)
     return res
+
 
 
 # %%
@@ -271,12 +274,14 @@ print("Comparaison des deux méthodes pour a=1=b")
 t0 = time.perf_counter()
 res1 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,1,1)[-1]
 temps1 = time.perf_counter()-t0
+
 print(f"Temps d'exécution de la méthode classique: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
 
 t1 = time.perf_counter()
 res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)[-1]
 temps2 = time.perf_counter()-t1
 print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément rajouté est: {res2}.")
+
 
 tmp = round(temps1/temps2, 3)
 print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
@@ -285,6 +290,7 @@ print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méth
 print()
 print("=====================================")
 print()
+
 
 # Comparaison en temps des deux méthodes pour a=100=b
 print("Comparaison des deux méthodes pour a=100=b")
@@ -356,11 +362,13 @@ def fab_20_20(v):
     return y**2/20 + x**2/20
 
 
+
 pt = (1,1)
 result1 = minimize(fab_20_20, pt, method='nelder-mead',tol=10e-10)
 
 print("Resultat de la minimisation pour Nelder:")
 print('Success : %s' % result1.success)
+
 print('Status : %s' % result1.message)
 print('Total Evaluations: %d' % result1.nfev)
 # evaluate solution
@@ -409,6 +417,7 @@ from pylab import cm
 def fr(x, y):
     return (1-x)**2 + 100*(y-x)**2
 
+
 def GradFr(x,y):
     return (-2*(1-x)-200*(y-x) ,200*(y-x))
 
@@ -424,6 +433,7 @@ ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [-5,5]²")
 level_sets = ax_level_sets.contourf(X, Y, Z, levels=20, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
 plt.show()
+
 # Figure : surface
 fig_surface, ax_surface = plt.subplots(
     1, 1, figsize=(3, 3), subplot_kw={"projection": "3d"}
@@ -465,5 +475,4 @@ plt.show()
 # Minimisation avec la descente de gradient classique
 # Premier point initial: (-3,3)
 test1 = descente(GradFr,(-3,3),0.01,2000,10e-8)[-1]
-
 
