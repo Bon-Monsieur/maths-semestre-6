@@ -247,7 +247,24 @@ plt.show()
 # QUESTION 3 Descente de gradient par coordonnée
 
 #Methode de la descente de gradient par coordonées avec condition d'arret
-def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
+def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon):
+    x = x_init
+    res=[x]
+    for i in range(1,n_iter+1):
+        g = grad(x)
+        if np.linalg.norm(g,ord=2)**2<=epsilon**2:
+            break
+        else:
+
+            temp = x.copy()
+            for j in range(0,len(g)):
+                temp[j] = x[j]-gamma*g[j]
+                x=temp.copy()
+                res.append(x)
+    return res
+
+
+def descenteCoordFixeFab(grad,x_init,gamma,n_iter,epsilon,a,b):
     x = x_init
     res=[x]
     for i in range(1,n_iter+1):
@@ -278,7 +295,7 @@ temps1 = time.perf_counter()-t0
 print(f"Temps d'exécution de la méthode classique: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
 
 t1 = time.perf_counter()
-res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)[-1]
+res2 = descenteCoordFixeFab(fabGrad,[1,1],0.01,1000,10e-8,1,1)[-1]
 temps2 = time.perf_counter()-t1
 print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément rajouté est: {res2}.")
 
@@ -302,7 +319,7 @@ print(f"Temps d'exécution de la méthode classique: {temps3:.4f}, le dernier é
 
 
 t3 = time.perf_counter()
-res4 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,100,100)[-1]
+res4 = descenteCoordFixeFab(fabGrad,[1,1],0.01,1000,10e-8,100,100)[-1]
 temps4 = time.perf_counter()-t3
 print(f"Temps d'exécution de la méthode par coordonnée: {temps4:.4f}, le dernier élément rajouté est: {res3}.")
 
@@ -332,7 +349,7 @@ plt.legend()
 plt.show()
 #%%
 #Affichage pour l'algo de descente par coordonnées
-li2 = descenteCoordFixe(fabGrad, [1, 1], 0.1, 1000, 0.0001,1,1)
+li2 = descenteCoordFixeFab(fabGrad, [1, 1], 0.1, 1000, 0.0001,1,1)
 x_li2, y_li2 = zip(*li2)
 
 Z2 = fab(1,1,X,Y)
@@ -414,11 +431,13 @@ from pylab import cm
 
 
 # Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
-def fr(x, y):
+def fr(x,y):
+    
     return (1-x)**2 + 100*(y-x)**2
 
 
-def GradFr(x,y):
+def GradFr(v):
+    x, y = v
     return (-2*(1-x)-200*(y-x) ,200*(y-x))
 
 x1 = np.arange(-5, 5, 0.05)
@@ -473,6 +492,22 @@ plt.show()
 
 # %%
 # Minimisation avec la descente de gradient classique
-# Premier point initial: (-3,3)
+
 test1 = descente(GradFr,(-3,3),0.01,2000,10e-8)[-1]
+test2 = descente(GradFr,(0,2),0.01,2000,10e-8)[-1]
+test3 = descente(GradFr,(-0.5,0.5),0.01,2000,10e-8)[-1]
+
+test4 = descenteCoordFixe(GradFr,[-3,3],0.01,2000,10e-8)[-1]
+test5 = descenteCoordFixe(GradFr,[0,2],0.01,2000,10e-8)[-1]
+test6 = descenteCoordFixe(GradFr,[-0.5,0.5],0.01,2000,10e-8)[-1]
+
+
+
+# %%
+# Utilisation de la méthode de Nelder-Mead 
+# pour minimiser la fonction de Rosenborck
+pt=(1,1)
+resu = minimize(fr, pt, method='nelder-mead',tol=10e-10)
+
+
 
