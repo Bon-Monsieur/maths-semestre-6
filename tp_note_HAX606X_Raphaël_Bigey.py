@@ -41,7 +41,7 @@ Y = np.arange(-5, 5, 0.25)
 X, Y = np.meshgrid(X, Y)
 Z = ftest(X, Y)
 
-# Plot the surface.
+# Plot the surface
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 
@@ -82,6 +82,7 @@ Y2 = [fab(10,10,x[0],x[1]) for x in X2]
 Y3 = [fab(50,50,x[0],x[1]) for x in X3]
 Y4 = [fab(100,100,x[0],x[1]) for x in X4]
 
+
 fig, ax = plt.subplots()
 ax.set_title("Évolution graphique de la valeur de l’objectif au cours des itérations de l’algorithme de descente de gradient")
 
@@ -112,48 +113,56 @@ x_li4, y_li4 = zip(*li4)
 
 
 Z1 = fab(1,1,X,Y)
+plt.figure()
 plt.contour(X, Y, Z1)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Ligne de niveau de la fonction fab a=1=b')
-plt.colorbar(label='Valeurs de f(x, y)')
+plt.colorbar()
 plt.grid(True)
 plt.scatter(x_li1,y_li1,color='red',label='Les points itérés',marker='.')
-plt.legend()
 plt.show()
 
+
+
 Z2 = fab(10,10,X,Y)
+plt.figure()
 plt.contour(X, Y, Z2)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Ligne de niveau de la fonction fab a=10=b')
-plt.colorbar(label='Valeurs de f(x, y)')
+plt.colorbar()
 plt.grid(True)
 plt.scatter(x_li2,y_li2,color='red',label='Les points itérés',marker='.')
-plt.legend()
 plt.show()
 
+
+
 Z3 = fab(50,50,X,Y)
+plt.figure()
 plt.contour(X, Y, Z3)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Ligne de niveau de la fonction fab a=50=b')
-plt.colorbar(label='Valeurs de f(x, y)')
+plt.colorbar()
 plt.grid(True)
 plt.scatter(x_li3,y_li3,color='red',label='Les points itérés',marker='.')
-plt.legend()
 plt.show()
 
+
+
 Z4 = fab(100,100,X,Y)
+plt.figure()
 plt.contour(X, Y, Z4)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Ligne de niveau de la fonction fab a=100=b')
-plt.colorbar(label='Valeurs de f(x, y)')
+plt.colorbar()
 plt.grid(True)
 plt.scatter(x_li4,y_li4,color='red',label='Les points itérés',marker='.')
 plt.legend()
 plt.show()
+
 
 # Remarque sur les vitesses de convergences:
 # On remarque que plus la fonction est "plate", plus la méthode de convergence va être longue
@@ -168,6 +177,8 @@ li2_norm = [np.linalg.norm(v,ord=2) for v in li2]
 li3_norm = [np.linalg.norm(v,ord=2) for v in li3]
 li4_norm = [np.linalg.norm(v,ord=2) for v in li4]
 
+
+plt.figure()
 plt.yscale("log")
 
 plt.ylabel("distance à l'optimum")
@@ -179,14 +190,54 @@ plt.plot(li2_norm,label='a=10=b')
 plt.plot(li3_norm,label='a=50=b')
 plt.plot(li4_norm,label='a=100=b')
 plt.legend()
+plt.show()
+
+
+
 # %%
 # a = 3 ; b = 20
+x = np.linspace(-2,2,1000)
+y = np.linspace(-2,2,1000)
+X, Y = np.meshgrid(x, y)
+
+ex1 = descenteFab(fabGrad, (1, 1), 0.1, 1000, 0.0001,3,20)
+x_ex1, y_ex1 = zip(*ex1)
+
+Zex1 = fab(3,20,X,Y)
+
+plt.figure()
+plt.contour(X, Y, Zex1)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Ligne de niveau de la fonction fab a=3;b=20')
+plt.colorbar(label=r'Valeurs de f_{a,b}(x, y)')
+plt.grid(True)
+plt.scatter(x_ex1,y_ex1,color='red',label='Les points itérés',marker='.')
+plt.legend()
+plt.show()
 
 
+# a = 17 ; b = 5
+x = np.linspace(-2,2,1000)
+y = np.linspace(-2,2,1000)
+X, Y = np.meshgrid(x, y)
+
+ex2 = descenteFab(fabGrad, (1, 1), 0.1, 1000, 0.0001,17,5)
+x_ex2, y_ex2 = zip(*ex2)
+
+Zex2 = fab(17,5,X,Y)
+plt.figure()
+plt.contour(X, Y, Zex2)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Ligne de niveau de la fonction fab a=17;b=5')
+plt.colorbar(label=r'Valeurs de f_{a,b}(x, y)')
+plt.grid(True)
+plt.scatter(x_ex2,y_ex2,color='red',label='Les points itérés',marker='.')
+plt.legend()
+plt.show()
 
 
-
-# a = 17 ; b = 12
 
 
 
@@ -196,14 +247,20 @@ plt.legend()
 #Methode de la descente de gradient par coordonées avec condition d'arret
 def descenteCoordFixe(grad,x_init,gamma,n_iter,epsilon,a,b):
     x = x_init
+    res=[x]
+    
     for i in range(1,n_iter+1):
         g = grad(x,a,b)
         if np.linalg.norm(g,ord=2)**2<=epsilon**2:
             break
         else:
+            temp = x.copy()
             for j in range(0,len(g)):
-                x[j] = x[j]-gamma*g[j]
-    return x
+                temp[j] = x[j]-gamma*g[j]
+            x=temp.copy()
+            res.append(x)
+    return res
+
 
 # %%
 import time
@@ -214,12 +271,12 @@ print("Comparaison des deux méthodes pour a=1=b")
 t0 = time.perf_counter()
 res1 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,1,1)[-1]
 temps1 = time.perf_counter()-t0
-print(f"Temps d'exécution de la méthode classque: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
+print(f"Temps d'exécution de la méthode classique: {temps1:.4f}, le dernier élément rajouté est: {res1}.")
 
 t1 = time.perf_counter()
-res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)
+res2 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,1,1)[-1]
 temps2 = time.perf_counter()-t1
-print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément est: {res2}.")
+print(f"Temps d'exécution de la méthode par coordonnée: {temps2:.4f}, le dernier élément rajouté est: {res2}.")
 
 tmp = round(temps1/temps2, 3)
 print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=1=b")
@@ -229,22 +286,63 @@ print()
 print("=====================================")
 print()
 
-# Comparaison en temps des deux méthodes pour a=50=b
+# Comparaison en temps des deux méthodes pour a=100=b
 print("Comparaison des deux méthodes pour a=100=b")
 
 t2 = time.perf_counter()
 res3 = descenteFab(fabGrad,[1, 1], 0.01, 1000, 10e-8,100,100)[-1]
 temps3 = time.perf_counter()-t2
-print(f"Temps d'exécution de la méthode classque: {temps3:.4f}, le dernier élément rajouté est: {res3}.")
+print(f"Temps d'exécution de la méthode classique: {temps3:.4f}, le dernier élément rajouté est: {res3}.")
 
 
 t3 = time.perf_counter()
-res4 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,100,100)
+res4 = descenteCoordFixe(fabGrad,[1,1],0.01,1000,10e-8,100,100)[-1]
 temps4 = time.perf_counter()-t3
-print(f"Temps d'exécution de la méthode par coordonnée: {temps4:.4f}, le dernier élément est: {res3}.")
+print(f"Temps d'exécution de la méthode par coordonnée: {temps4:.4f}, le dernier élément rajouté est: {res3}.")
 
 tmp = round(temps3/temps4, 3)
 print(f"Donc la méthode par coordonnée est {tmp} fois plus rapide que la méthode classique pour a=100=b")
+
+#%% 
+x = np.linspace(-2,2,1000)
+y = np.linspace(-2,2,1000)
+X, Y = np.meshgrid(x, y)
+
+li1 = descenteFab(fabGrad, (1, 1), 0.1, 500, 0.0001,1,1)
+x_li1, y_li1 = zip(*li1)
+
+
+Z1 = fab(1,1,X,Y)
+plt.figure()
+plt.contour(X, Y, Z1)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Descente gradient classique')
+plt.colorbar(label='Valeurs de f(x, y)')
+
+plt.grid(True)
+plt.scatter(x_li1,y_li1,color='red',label='Les points itérés',marker='.')
+plt.legend()
+plt.show()
+#%%
+
+li2 = descenteCoordFixe(fabGrad, [1, 1], 0.1, 500, 0.0001,1,1)
+x_li2, y_li2 = zip(*li2)
+
+Z2 = fab(1,1,X,Y)
+plt.figure()
+plt.contour(X, Y, Z2)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Descente gradient coordonées')
+plt.colorbar(label='Valeurs de f(x, y)')
+plt.grid(True)
+plt.scatter(x_li2,y_li2,color='red',label='Les points itérés',marker='.')
+plt.legend()
+plt.show()
+
+
+
 
 
 
@@ -314,17 +412,17 @@ from pylab import cm
 
 
 # Representation fonction de Rosenbrock et ses lignes de niveau sur [-5,5]
-def fr(x, y):
+'''def fr(x, y):
     return (1-x)**2 + 100*(y-x)**2
 
 x1 = np.arange(-5, 5, 0.05)
 y1 = np.arange(-5, 5, 0.05)
 X, Y = np.meshgrid(x1, y1)
-Z = fr(X, Y)
+Z = fr(X, Y)'''
 
 
 # Figure : lignes de niveau.
-fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
+'''fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
 ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [-5,5]²")
 level_sets = ax_level_sets.contourf(X, Y, Z, levels=20, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
@@ -344,11 +442,11 @@ surf = ax_surface.plot_surface(
     linewidth=0,
     antialiased=True,
     alpha=0.8,
-)
+)'''
 
 # %%
 # Représentation des lignes de niveau de f_r sur [0,1.5]
-x2 = np.arange(0, 1.5, 0.05)
+'''x2 = np.arange(0, 1.5, 0.05)
 y2 = np.arange(0, 1.5, 0.05)
 X2, Y2 = np.meshgrid(x2, y2)
 Z2 = fr(X2,Y2)
@@ -356,6 +454,7 @@ fig_level_sets, ax_level_sets = plt.subplots(1, 1, figsize=(3, 3))
 ax_level_sets.set_title(r"Ligne de niveau de $ f_r $ sur [0,1.5]²")
 level_sets = ax_level_sets.contourf(X2, Y2, Z2, levels=40, cmap="RdBu_r")
 fig_level_sets.colorbar(level_sets, ax=ax_level_sets, fraction=0.046, pad=0.04)
+plt.show()'''
 
 #On remarque la fonction admet beaucoup de
 # %%
