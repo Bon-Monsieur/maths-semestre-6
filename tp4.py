@@ -38,3 +38,21 @@ print(res.x)
 
 
 # %%
+# QUESTION 2
+def descente_projete(grad,proj,x_init,gamma,maxiter,eps):
+    x = x_init
+    
+    for i in range(maxiter):
+        g = grad(x)
+        if np.linalg.norm(g)**2<=eps**2:
+            break
+        else:
+            tmp = x
+            for j in range(len(x)):
+                tmp[j] = x[j]-gamma*g[j]
+            x = proj(tmp)
+    return x
+
+
+#%%
+# QUESTION 3
