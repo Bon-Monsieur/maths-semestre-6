@@ -66,7 +66,7 @@ def proj1(v):
     return [x,y]
 
 res = descente_projete(fgrad,proj1,[-2,3],10e-3,10000,10e-3)
-print(res)
+print("résultat sous contraite  s.c. x1≥0, x2≥0 :\n",res)
 # %%
 # QUESTION 4
 
@@ -76,7 +76,19 @@ def proj2(v):
         return v
     return [x/np.linalg.norm(v,ord=2),y/np.linalg.norm(v,ord=2)]
 
-res = descente_projete(fgrad,proj2,[-2,3],10e-3,10000,10e-6)
-print(res)
+res = descente_projete(fgrad,proj2,[0,0],10e-5,10000,10e-6)
+print("résultat sous contraite  s.c. ∥x∥²≤1 :\n",res)
 
+# %%
+# POUR ALLER PLUS LOIN
+def c1(v):
+    x1,x2 = v
+    return x1-3*x2+2
+def c2(v):
+    x1,x2 = v
+    return x1+x2
+contraint = [{'type' : 'ineq','fun':c1},{'type':'ineq','fun':c2}]
+
+res = minimize(ftest, (2,3), method='TNC',tol=10e-9,constraints=contraint)
+print(res)
 # %%
