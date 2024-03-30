@@ -3,3 +3,5 @@
 */output/*
 *.synctex.gz
 *.out
+*.fls
+*.fdb_latexmk
