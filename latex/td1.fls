@@ -1,6 +1,6 @@
-PWD C:\Users\Raphael\Desktop\FAC\L3\maths-semestre-6\latex
+PWD c:\Users\Raphael\Desktop\FAC\L3\maths-semestre-6\latex
 INPUT C:\Users\Raphael\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT td1.tex
+INPUT c:\Users\Raphael\Desktop\FAC\L3\maths-semestre-6\latex\td1.tex
 OUTPUT td1.log
 INPUT C:\Users\Raphael\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
 INPUT C:\Users\Raphael\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
