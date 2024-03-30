@@ -1,0 +1,209 @@
+\makeatletter
+%--------------------------------------------------------------------------------
+\usepackage[T1]{fontenc} % font type
+\usepackage[french]{babel} % language
+\usepackage{lmodern} % font type
+\usepackage[shortlabels]{enumitem}
+\setlist[itemize,1]{label={\color{gray}\small \textbullet}} % customises itemize default -
+\usepackage{fancyhdr} % customises head and foot-notes
+\usepackage{centernot} % allows centering \not with \centernot
+\usepackage{stmaryrd} % allows \llbracket
+\usepackage[overload]{abraces} % allows \aoverbrace
+
+\usepackage{xcolor} % colour customisation, extends to tables with {colortbl}
+\definecolor{astral}{RGB}{46,116,181}
+\definecolor{verdant}{RGB}{96,172,128}
+\definecolor{algebraic-amber}{RGB}{255,179,102} % definition colour
+\definecolor{calculus-coral}{RGB}{255,191,191} % exercice colour
+\definecolor{divergent-denim}{RGB}{130,172,211} % proposition colour 
+\definecolor{matrix-mist}{RGB}{204,204,204} % remark colour
+\definecolor{numeric-navy}{RGB}{204,204,204} % theorem colour 
+\definecolor{quadratic-quartz}{RGB}{204,153,153} % example colour 
+
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{MnSymbol}
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\usepackage{hyperref}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows}
+
+
+\newtheoremstyle{gen-style}{\topsep}{\topsep}%
+{}%         Body font
+{}%         Indent amount (empty = no indent, \parindent = para indent)
+{\sffamily\bfseries}% Thm head font
+{.}%        Punctuation after thm head
+{ }%     Space after thm head (\newline = linebreak)
+{\thmname{#1}\thmnumber{~#2}\thmnote{~#3}}%         Thm head spec
+
+
+\newtheoremstyle{no-num-style}{\topsep}{\topsep}%
+{}%         Body font
+{}%         Indent amount (empty = no indent, \parindent = para indent)
+{\sffamily\bfseries}% Thm head font
+{.}%        Punctuation after thm head
+{ }%     Space after thm head (\newline = linebreak)
+{\thmname{#1}\thmnote{~#3}}%         Thm head spec
+
+
+\usepackage[]{mdframed}
+
+\newcommand{\mytheorem}[5]{%
+	\ifstrequal{#5}{o}{%
+		\newmdtheoremenv[
+		hidealllines=true,
+		leftline=true,
+		skipabove=0pt,
+		innertopmargin=-5pt,
+		innerbottommargin=2pt,
+		linewidth=4pt,
+		innerrightmargin=0pt,
+		linecolor=#3,
+		]{#1}[#4]{#2}%
+	}{%
+		\newmdtheoremenv[
+		hidealllines=true,
+		leftline=true,
+		skipabove=0pt,
+		innertopmargin=-5pt,
+		innerbottommargin=2pt,
+		linewidth=4pt,
+		innerrightmargin=0pt,
+		linecolor=#3,
+		]{#1}{#2}[#4]%
+	}%
+}
+
+\theoremstyle{gen-style}
+\mytheorem{proposition}{Proposition}{divergent-denim}{section}{}
+\mytheorem{propdef}{Proposition - Définition}{divergent-denim}{section}{}
+\mytheorem{theorem}{Théorème}{quadratic-quartz}{section}{}
+\mytheorem{lemme}{Lemme}{quadratic-quartz}{section}{}
+\mytheorem{corollaire}{Corollaire}{quadratic-quartz}{section}{}
+\mytheorem{example}{Exemple}{quadratic-quartz}{section}{}
+\mytheorem{remark}{Remarque}{matrix-mist}{section}{}
+\mytheorem{notation}{Notation}{matrix-mist}{section}{}
+\mytheorem{exercise}{Exercice}{calculus-coral}{section}{}
+\mytheorem{exercice}{Exercice}{calculus-coral}{section}{}
+\mytheorem{definition}{Definition}{algebraic-amber}{section}{}
+
+\newcounter{oc-counter}
+\mytheorem{oc-proposition}{Proposition}{divergent-denim}{oc-counter}{o}
+\mytheorem{oc-propdef}{Proposition - Définition}{divergent-denim}{oc-counter}{o}
+\mytheorem{oc-theorem}{Théorème}{divergent-denim}{oc-counter}{o}
+\mytheorem{oc-lemme}{Lemme}{quadratic-quartz}{oc-counter}{o}
+\mytheorem{oc-example}{Exemple}{quadratic-quartz}{oc-counter}{o}
+\mytheorem{oc-remark}{Remarque}{matrix-mist}{oc-counter}{o}
+\mytheorem{oc-exercise}{Exercice}{calculus-coral}{oc-counter}{o}
+\mytheorem{oc-definition}{Definition}{algebraic-amber}{oc-counter}{o}
+
+\theoremstyle{no-num-style}
+\mytheorem{td-sol}{Solution}{verdant}{}{}
+\mytheorem{no-num-definition}{Définition}{algebraic-amber}{}{}
+\mytheorem{no-num-theorem}{Théorème}{algebraic-amber}{}{}
+\mytheorem{no-num-remark}{Remarque}{matrix-mist}{}{}
+\mytheorem{oc-intro}{Introduction}{quadratic-quartz}{}{}
+\mytheorem{oc-proof}{Preuve}{verdant}{}{}
+\mytheorem{oc-young}{Formule de Taylor à l'ordre 2}{verdant}{}{}
+\mytheorem{oc-notation}{Notation}{matrix-mist}{}{}
+\mytheorem{rappel}{Rappel}{matrix-mist}{section}{}
+\mytheorem{myproof}{Preuve}{verdant}{}{}
+\mytheorem{td-exo}{Exercice}{calculus-coral}{}{}
+\numberwithin{oc-counter}{subsection}
+
+%---------------
+% Mise en page
+%--------------
+
+\setlength{\parindent}{0pt}
+
+\providecommand{\defemph}[1]{{\sffamily\bfseries\color{astral}#1}}
+
+
+\usepackage{sectsty}
+\allsectionsfont{\color{astral}\normalfont\sffamily\bfseries}
+
+\usepackage{mathrsfs}
+
+%----- Easy way to redeclare math operators -----
+\makeatletter
+\newcommand\RedeclareMathOperator{%
+	\@ifstar{\def\rmo@s{m}\rmo@redeclare}{\def\rmo@s{o}\rmo@redeclare}%
+}
+\newcommand\rmo@redeclare[2]{%
+	\begingroup \escapechar\m@ne\xdef\@gtempa{{\string#1}}\endgroup
+	\expandafter\@ifundefined\@gtempa
+	{\@latex@error{\noexpand#1undefined}\@ehc}%
+	\relax
+	\expandafter\rmo@declmathop\rmo@s{#1}{#2}}
+\newcommand\rmo@declmathop[3]{%
+	\DeclareRobustCommand{#2}{\qopname\newmcodes@#1{#3}}%
+}
+\@onlypreamble\RedeclareMathOperator
+\makeatother
+
+\newcommand{\skipline}{\vspace{\baselineskip}}
+\newcommand{\noi}{\noindent}
+%------------------------------------------------
+
+
+\newcommand{\adh}[1]{\mathring{#1}} %adherence
+\newcommand{\badh}[1]{\mathring{\overbrace{#1}}} % big adherence
+\newcommand{\norme}{\mathcal{N}} % norme
+\newcommand{\ol}[1]{\overline{#1}} % overline
+\newcommand{\ul}[1]{\underline{#1}} % underline
+\newcommand{\sub}{\subset} % subset
+\newcommand{\scr}[1]{\mathscr{#1}} % scr rapide
+\newcommand{\bb}[1]{\mathbb{#1}} % bb rapide
+\newcommand{\bolo}[1]{B({#1}\mathopen{}[\mathclose{}} % boule ouverte
+\newcommand{\bolf}[1]{B({#1}\mathopen{}]\mathclose{}} % boule fermee
+\newcommand{\act}{\circlearrowleft} % agit sur
+\newcommand{\glx}[1]{\text{GL}_{#1}} % GL_x
+\newcommand{\cequiv}[1]{\mathopen{}[#1\mathclose{}]} % classe d'equivalence
+\newcommand{\restr}[2]{#1\mathop{}\!|_{#2}} % restriction
+\newcommand{\nn}[1]{||#1||}
+\newcommand{\n}[1]{|#1|}
+
+
+%----- Intervalles -----
+\newcommand{\oo}[1]{\mathopen{]}#1\mathclose{[}}
+\newcommand{\of}[1]{\mathopen{]}#1\mathclose{]}}
+\newcommand{\fo}[1]{\mathopen{[}#1\mathclose{[}}
+\newcommand{\ff}[1]{\mathopen{[}#1\mathclose{]}}
+\newcommand{\boo}[1]{\mathopen{\big]}#1\mathclose{\big[}}
+\newcommand{\bof}[1]{\mathopen{\big]}#1\mathclose{\big]}}
+\newcommand{\bfo}[1]{\mathopen{\big[}#1\mathclose{\big[}}
+\newcommand{\bff}[1]{\mathopen{\big[}#1\mathclose{\big]}}
+\newcommand{\norm}[1]{\mathopen{}\left\|#1\right\|\mathclose{}} % norme
+
+
+\providecommand{\1}{\mathds{1}}
+\DeclareMathOperator{\im}{\mathsf{Im}}
+\DeclareRobustCommand{\re}{\mathsf{Re}}
+\RedeclareMathOperator{\ker}{\mathsf{Ker}}
+\RedeclareMathOperator{\det}{\mathsf{det}}
+\DeclareMathOperator{\vect}{\mathsf{Vect}}
+\DeclareMathOperator{\diam}{\mathsf{Diam}}
+\DeclareMathOperator{\orb}{\mathsf{orb}}
+\DeclareMathOperator{\st}{\mathsf{st}}
+\DeclareMathOperator{\spr}{\mathsf{SP_{\bb R}}}
+\DeclareMathOperator{\aut}{\mathsf{Aut}}
+\DeclareMathOperator{\bij}{\mathsf{Bij}}
+\DeclareMathOperator{\rank}{\mathsf{rank}}
+\DeclareMathOperator{\tr}{\mathsf{tr}}
+\DeclareMathOperator{\id}{\mathsf{Id}}
+\providecommand{\B}{\mathsf{B}}
+
+
+\providecommand{\dpar}[2]{\frac{\partial #1}{\partial #2}}
+\makeatother
