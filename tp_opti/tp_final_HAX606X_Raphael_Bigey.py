@@ -327,21 +327,65 @@ ax4.set_aspect('equal')
 # %% 
 # EXERCICE 2
 # QUESTION 18)
-def Sim_GDA(x_init,y_init,gamma,maxiter,eps,f_grad_x,f_grad_y):
-    x = x_init
-    y = y_init
-    result = [x]
-    for k in range(maxiter):
-        nab_x = f_grad_x(x,y)
-        nab_y = f_grad_y(x,y)
-        if (np.linalg(x,ord=2)**2<=eps**2 or np.linalg(y,ord=2)**2<=eps**2):
+def Sim_GDA(p_init,gamma,maxiter,eps,f_grad_x,f_grad_y):
+    x = p_init[0]
+    y = p_init[1]
+    result = [p_init]
+    for k in range(0,maxiter):
+        print(k)
+        nab_x = f_grad_x(x,y) # Renvoie un np.array
+        nab_y = f_grad_y(x,y) # Renvoie un np.array
+        if (x<=eps**2 or y<=eps**2):
             break
         else:
             x = x - gamma*nab_x
             y = y + gamma*nab_y
+            
+            result.append(np.array([x,y]))
+            print(result)
+    return result
 
+def Alt_GDA(p_init,gamma,maxiter,eps,f_grad_x,f_grad_y):
+    x = p_init[0]
+    y = p_init[1]
+    result = [p_init]
+    for k in range(0,maxiter):
+        nab_x = f_grad_x(x,y) # Renvoie un np.array
+        
+        if (x**2<=eps**2 or y**2<=eps**2):
+            break
+        else:
+            x = x - gamma*nab_x
+            nab_y = f_grad_y(x,y) # Renvoie un np.array
+            y = y + gamma*nab_y
+            result.append(np.array([x,y]))
+    return result
 
+# %%
+# QUESTION 19)
+fig.clear()
+def f1(v):
+    x,y=v
+    return x*y
+def nab_x_f1(x,y):
+    return y
+def nab_y_f1(x,y):
+    return x
 
+def f2(v):
+    x,y=v
+    return 0.5*x**2 + 10*x*y - 0.5*y**2
+def nab_x_f2(x,y):
+    return x + 10*y
+def nab_y_f2(x,y):
+    return y + 10*x
+
+pt = np.array([0.5,-0.5])
+fig, ([ax1,ax2],[ax3,ax4]) = plt.subplots(2,2,figsize=(20, 9))
+sim_f1 = Sim_GDA(p_init=pt,gamma=0.01,maxiter=100,eps=1e-10,f_grad_x=nab_x_f1,f_grad_y=nab_y_f1)
+print(sim_f1)
+x_f1_sim, y_f1_sim = zip(*sim_f1)
+ax1.plot(x_f1_sim,y_f1_sim,marker='.',linestyle='-')
 
 #%%
 # QUESTION 21) 
